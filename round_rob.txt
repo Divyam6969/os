@@ -1,0 +1,70 @@
+#include<iostream>
+using namespace std;
+void waiting_time(int process[], int bt[], int n, int wt[], int quantum)
+{
+    int rem_bt[n];
+    for ( int i=0; i<n; i++)
+    {
+        rem_bt[i] = bt[i];
+    }
+    int t=0; //curent time
+    while(1)
+    {
+        bool check = true;
+        for ( int i=0; i<n; i++)
+        {
+            if (rem_bt[i] > 0)
+            {
+                check = false;
+                if (rem_bt[i] > quantum)
+                {
+                    t = t+quantum;
+                    rem_bt[i] -= quantum;
+                }
+                else
+                {
+                    t = t + rem_bt[i];
+                    wt[i] = t - bt[i];
+                    rem_bt[i] = 0;
+                }
+            }
+        }
+        if (check == true)
+        break;
+    }
+}
+void turnaroundTime(int process[], int bt[], int wt[], int n, int tat[])
+{
+    for (int i=0; i<n; i++)
+    {
+        tat[i] = bt[i]+wt[i];
+    }
+}
+void avg_time(int process[], int n, int bt[], int quantum)
+{
+    int wt[n], tat[n], total_WT = 0, total_TAT = 0;
+    waiting_time(process, bt, n, wt, quantum);
+    turnaroundTime(process, bt, wt,n, tat);
+
+    for(int i=0; i<n; i++)
+    {
+        total_WT += wt[i];
+        total_TAT += tat[i];
+    }
+    cout<<"average waiting time is: "<<(float)total_WT/(float)n<<endl;
+    cout<<"average turn around time is:"<<(float)total_TAT/(float)n<<endl;
+}
+int main()
+{
+    // process id's
+    int processes[] = { 1, 2, 3};
+    int n = sizeof processes / sizeof processes[0];
+ 
+    // Burst time of all processes
+    int burst_time[] = {10, 5, 8};
+ 
+    // Time quantum
+    int quantum = 2;
+    avg_time(processes, n, burst_time, quantum);
+    return 0;
+}
